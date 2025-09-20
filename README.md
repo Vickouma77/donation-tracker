@@ -1,53 +1,241 @@
 # Donation Tracker API
 
-A RESTful API built with Express and TypeScript for tracking donations to non-profit projects.
+A production-ready, enterprise-grade RESTful API built with Express.js and TypeScript for managing non-profit donation projects.
 
-## Features
+## 🚀 Features
 
-- Track multiple projects with donation goals
-- Record donations to specific projects
-- Track progress towards project funding goals
-- Simple, easy-to-use API endpoints
+- **TypeScript**: Full type safety and better developer experience
+- **Security**: Helmet.js, CORS, rate limiting, input validation
+- **Logging**: Structured logging with Winston
+- **Error Handling**: Comprehensive error handling and monitoring
+- **API Documentation**: Complete JSDoc documentation
+- **Health Checks**: Built-in health monitoring
+- **Docker Support**: Containerized deployment
+- **Environment Configuration**: Flexible configuration management
+- **Rate Limiting**: Protection against abuse
+- **Async/Await**: Modern JavaScript patterns
 
-## API Endpoints
+## 📋 API Endpoints
+
+### Base URL
+```
+http://localhost:4000/api/v1
+```
 
 ### Projects
-
-- `GET /projects` - Get all projects with their current donation status
-- `GET /projects/:id` - Get a single project by ID
+- `GET /projects` - Get all projects
+- `GET /projects/:id` - Get project by ID
 
 ### Donations
+- `POST /donate` - Create a donation
 
-- `POST /donate` - Add a donation to a project
-  - Request body: 
-    ```json
-    {
-      "projectId": "1",
-      "amount": 100,
-      "paymentGateway": "PayPal" // Optional
-    }
-    ```
-  - Response: Updated project with the new donation details
+### Health
+- `GET /health` - Health check
 
-## Getting Started
+## 🛠️ Installation
 
 ### Prerequisites
+- Node.js 18+
+- npm or yarn
 
-- Node.js (v16 or higher)
-- npm
+### Setup
+```bash
+# Clone the repository
+git clone https://github.com/Vickouma77/donation-tracker.git
+cd donation-tracker
 
-### Installation
+# Install dependencies
+npm install
 
-1. Clone the repository
-   ```bash
-   git clone https://github.com/Vickouma77/donation-tracker.git
-   cd donation-tracker
-   ```
+# Copy environment file
+cp .env.example .env
 
-2. Install dependencies
-   ```bash
-   npm install
-   ```
+# Start development server
+npm run dev
+```
+
+## ⚙️ Configuration
+
+Create a `.env` file with the following variables:
+
+```env
+# Server
+PORT=4000
+NODE_ENV=development
+
+# Logging
+LOG_LEVEL=info
+
+# CORS
+CORS_ORIGIN=http://localhost:3000
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=100
+
+# API
+API_VERSION=v1
+```
+
+## 🏃‍♂️ Running the Application
+
+### Development
+```bash
+npm run dev
+```
+
+### Production
+```bash
+npm run build
+npm run start:prod
+```
+
+### Docker
+```bash
+# Build image
+npm run docker:build
+
+# Run container
+npm run docker:run
+```
+
+## 🧪 Testing
+
+```bash
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Type checking
+npm run lint
+```
+
+## 📚 API Documentation
+
+### Health Check
+```bash
+GET /api/v1/health
+```
+
+Response:
+```json
+{
+  "status": "OK",
+  "timestamp": "2025-09-20T19:00:00.000Z",
+  "uptime": 3600,
+  "environment": "development"
+}
+```
+
+### Get All Projects
+```bash
+GET /api/v1/projects
+```
+
+### Get Project by ID
+```bash
+GET /api/v1/projects/{id}
+```
+
+### Create Donation
+```bash
+POST /api/v1/donate
+Content-Type: application/json
+
+{
+  "projectId": "uuid",
+  "amount": 100.00,
+  "paymentGateway": "PayPal"
+}
+```
+
+## 🏗️ Project Structure
+
+```
+donation-tracker/
+├── src/
+│   ├── config/          # Configuration management
+│   ├── controllers/     # Request handlers
+│   ├── docs/           # API documentation
+│   ├── models/         # Data models
+│   ├── routes/         # API routes
+│   ├── services/       # Business logic
+│   ├── types/          # TypeScript definitions
+│   ├── utils/          # Utility functions
+│   └── index.ts        # Application entry point
+├── logs/               # Application logs
+├── dist/               # Compiled JavaScript
+├── Dockerfile          # Docker configuration
+├── docker-compose.yml  # Docker Compose (optional)
+├── package.json        # Dependencies and scripts
+├── tsconfig.json       # TypeScript configuration
+└── README.md           # This file
+```
+
+## 🔒 Security Features
+
+- **Helmet.js**: Security headers
+- **CORS**: Cross-origin resource sharing
+- **Rate Limiting**: Prevents abuse (100 req/15min)
+- **Input Validation**: Request sanitization
+- **Error Sanitization**: No sensitive data leakage
+- **Request Logging**: Audit trail
+
+## 📊 Monitoring
+
+- **Health Checks**: `/health` endpoint
+- **Structured Logging**: Winston with multiple transports
+- **Error Tracking**: Comprehensive error logging
+- **Performance Monitoring**: Request/response logging
+
+## 🚀 Deployment
+
+### Environment Variables
+Set the following in your production environment:
+
+```env
+NODE_ENV=production
+PORT=4000
+LOG_LEVEL=info
+CORS_ORIGIN=https://your-frontend-domain.com
+```
+
+### Docker Deployment
+```bash
+# Build and run with Docker
+docker build -t donation-tracker .
+docker run -p 4000:4000 -e NODE_ENV=production donation-tracker
+```
+
+### PM2 (Process Manager)
+```bash
+npm install -g pm2
+pm2 start dist/index.js --name donation-tracker
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
+
+## 📄 License
+
+ISC License - see LICENSE file for details.
+
+## 🆘 Support
+
+For support, please create an issue in the GitHub repository.
+
+## 🔄 API Versioning
+
+The API uses versioning in the URL path: `/api/v1/`
+
+Future versions will be available at `/api/v2/`, etc.
 
 3. Start the development server
    ```bash
