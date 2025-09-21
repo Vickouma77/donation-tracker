@@ -18,7 +18,7 @@ export class ProjectController {
   getAllProjects = async (req: Request, res: Response): Promise<void> => {
     try {
       logger.info('Fetching all projects');
-      const projects = this.projectService.getAllProjects();
+      const projects = await this.projectService.getAllProjects();
 
       logger.info('Projects retrieved successfully', { count: projects.length });
       res.status(200).json({
@@ -57,7 +57,7 @@ export class ProjectController {
       }
 
       logger.info('Fetching project by ID', { projectId: id });
-      const project = this.projectService.getProjectById(id);
+      const project = await this.projectService.getProjectById(id);
 
       if (!project) {
         logger.warn('Project not found', { projectId: id });

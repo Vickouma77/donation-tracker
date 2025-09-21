@@ -48,7 +48,7 @@ export class DonationController {
       }
 
       // Check if project exists
-      const project = this.projectService.getProjectById(projectId);
+      const project = await this.projectService.getProjectById(projectId);
       if (!project) {
         logger.warn('Project not found for donation', { projectId });
         res.status(404).json({
@@ -66,13 +66,13 @@ export class DonationController {
       };
 
       // Create donation
-      const newDonation = this.donationService.createDonation(donationData);
+      const newDonation = await this.donationService.createDonation(donationData);
 
       // Update project amount
-      const updatedProject = this.projectService.updateProjectAmount(projectId, Number(amount));
+      const updatedProject = await this.projectService.updateProjectAmount(projectId, Number(amount));
 
       if (!updatedProject) {
-        logger.error('Failed to update project amount', { projectId, amount });
+        logger.error('Failed to update project amount', { projectId });
         res.status(500).json({
           success: false,
           message: 'Failed to update project amount'
@@ -81,12 +81,10 @@ export class DonationController {
       }
 
       logger.info('Donation created successfully', {
-        donationId: newDonation.id,
+        donationId: newDonation._id,
         projectId,
         amount
-      });
-
-      res.status(201).json({
+      });      res.status(201).json({
         success: true,
         data: {
           donation: newDonation,

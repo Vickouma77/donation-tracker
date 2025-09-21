@@ -24,16 +24,19 @@
     "test:watch": "npm run test -- --watch",
     "clean": "rm -rf dist logs",
     "prebuild": "npm run clean",
+    "seed": "tsx src/scripts/seed.ts",
+    "seed:dev": "SEED_DATABASE=true tsx watch src/index.ts",
     "docker:build": "docker build -t donation-tracker .",
-    "docker:run": "docker run -p 4000:4000 donation-tracker"
+    "docker:run": "docker run -p 4000:4000 -e MONGODB_URI=mongodb://host.docker.internal:27017/donation-tracker donation-tracker"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "17.2.2",
     "express": "^5.1.0",
     "express-rate-limit": "^7.4.1",
     "express-validator": "^7.2.0",
     "helmet": "^7.1.0",
+    "mongoose": "^8.5.3",
     "uuid": "^9.0.1",
     "winston": "^3.14.2"
   },

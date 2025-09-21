@@ -3,11 +3,32 @@ import cors from 'cors';
 import helmet from 'helmet';
 import projectRoutes from './routes/project.routes.js';
 import donationRoutes from './routes/donation.routes.js';
+import Database from './utils/database.js';
 import logger from './utils/logger.js';
 import config from './config/index.js';
 
 // Create Express app
 const app = express();
+
+// Initialize database connection
+async function initializeDatabase() {
+  try {
+    const db = Database.getInstance();
+    await db.connect();
+
+    // Optional: Seed database in development
+    if (config.nodeEnv === 'development' && process.env.SEED_DATABASE === 'true') {
+      logger.info('Seeding database...');
+      const { seedDatabase } = await import('./scripts/seed.js');
+      await seedDatabase();
+    }
+
+    logger.info('Database initialized successfully');
+  } catch (error) {
+    logger.error('Database initialization failed', { error: (error as Error).message });
+    process.exit(1);
+  }
+}
 
 // Security middleware
 app.use(helmet({
@@ -45,13 +66,31 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: config.nodeEnv,
-  });
+app.get('/health', async (req: Request, res: Response) => {
+  try {
+    const db = Database.getInstance();
+    const dbHealth = await db.healthCheck();
+
+    const health = {
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: config.nodeEnv,
+      database: dbHealth ? 'connected' : 'disconnected',
+      version: config.apiVersion,
+    };
+
+    const statusCode = dbHealth ? 200 : 503; // 503 Service Unavailable if DB is down
+
+    res.status(statusCode).json(health);
+  } catch (error) {
+    logger.error('Health check failed', { error: (error as Error).message });
+    res.status(503).json({
+      status: 'ERROR',
+      timestamp: new Date().toISOString(),
+      database: 'error',
+    });
+  }
 });
 
 // API version prefix
@@ -116,11 +155,22 @@ process.on('SIGINT', () => {
 });
 
 // Start server
-app.listen(config.port, () => {
-  logger.info(`Server is running on http://localhost:${config.port}`, {
-    environment: config.nodeEnv,
-    apiVersion: config.apiVersion,
-  });
-});
+async function startServer() {
+  try {
+    // Initialize database first
+    await initializeDatabase();
 
-export default app;
+    // Start the HTTP server
+    app.listen(config.port, () => {
+      logger.info(`Server is running on http://localhost:${config.port}`, {
+        environment: config.nodeEnv,
+        apiVersion: config.apiVersion,
+      });
+    });
+  } catch (error) {
+    logger.error('Failed to start server', { error: (error as Error).message });
+    process.exit(1);
+  }
+}
+
+startServer();

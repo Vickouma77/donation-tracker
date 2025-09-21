@@ -11,6 +11,7 @@ interface Config {
   rateLimitWindowMs: number;
   rateLimitMax: number;
   apiVersion: string;
+  mongoUrl: string;
 }
 
 const config: Config = {
@@ -21,6 +22,7 @@ const config: Config = {
   rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // 15 minutes
   rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100', 10), // 100 requests per window
   apiVersion: process.env.API_VERSION || 'v1',
+  mongoUrl: process.env.MONGODB_URI || process.env.MONGO_URL || 'mongodb://localhost:27017/donation-tracker',
 };
 
 export default config;

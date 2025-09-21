@@ -5,15 +5,17 @@ A production-ready, enterprise-grade RESTful API built with Express.js and TypeS
 ## 🚀 Features
 
 - **TypeScript**: Full type safety and better developer experience
+- **MongoDB**: Robust NoSQL database with Mongoose ODM
 - **Security**: Helmet.js, CORS, rate limiting, input validation
 - **Logging**: Structured logging with Winston
 - **Error Handling**: Comprehensive error handling and monitoring
 - **API Documentation**: Complete JSDoc documentation
-- **Health Checks**: Built-in health monitoring
+- **Health Checks**: Built-in health monitoring with database status
 - **Docker Support**: Containerized deployment
 - **Environment Configuration**: Flexible configuration management
 - **Rate Limiting**: Protection against abuse
 - **Async/Await**: Modern JavaScript patterns
+- **Database Seeding**: Automated sample data population
 
 ## 📋 API Endpoints
 
@@ -59,7 +61,8 @@ npm run dev
 Create a `.env` file with the following variables:
 
 ```env
-# Server
+```env
+# Server Configuration
 PORT=4000
 NODE_ENV=development
 
@@ -73,8 +76,34 @@ CORS_ORIGIN=http://localhost:3000
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX=100
 
-# API
+# API Version
 API_VERSION=v1
+
+# Database
+MONGODB_URI=mongodb://localhost:27017/donation-tracker
+```
+
+### MongoDB Setup
+
+#### Option 1: Local MongoDB
+```bash
+# Install MongoDB locally
+# macOS with Homebrew
+brew install mongodb-community
+brew services start mongodb-community
+
+# Ubuntu/Debian
+sudo apt-get install mongodb
+sudo systemctl start mongodb
+
+# Or use Docker
+docker run -d -p 27017:27017 --name mongodb mongo:latest
+```
+
+#### Option 2: MongoDB Atlas (Cloud)
+1. Create account at [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create a cluster
+3. Get connection string and update `MONGODB_URI` in `.env`
 ```
 
 ## 🏃‍♂️ Running the Application
@@ -84,10 +113,25 @@ API_VERSION=v1
 npm run dev
 ```
 
+### Development with Auto-Seeding
+```bash
+npm run seed:dev  # Seeds database and starts dev server
+```
+
 ### Production
 ```bash
 npm run build
 npm run start:prod
+```
+
+### Database Operations
+```bash
+# Seed database with sample data
+npm run seed
+
+# Clean and rebuild
+npm run clean
+npm run build
 ```
 
 ### Docker
@@ -95,8 +139,23 @@ npm run start:prod
 # Build image
 npm run docker:build
 
-# Run container
+# Run container (with local MongoDB)
 npm run docker:run
+```
+
+### Docker Compose (Recommended)
+```bash
+# Start both app and MongoDB
+docker-compose up
+
+# Start in background
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f app
 ```
 
 ## 🧪 Testing
